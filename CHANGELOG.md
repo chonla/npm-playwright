@@ -8,7 +8,7 @@
 - `parseBody(response, schema)`: validates a JSON body with any Standard Schema library (zod, valibot, arktype) and returns it typed.
 - Stacked decorators (`@step` above `@Post`) keep the original method's parameter names.
 
-## 0.2.0
+## 0.2.0 (not published — shipped as part of 0.3.0)
 
 ### Breaking
 
