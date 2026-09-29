@@ -3,10 +3,10 @@ import { fill, parameters, words } from './label';
 
 /**
  * Method decorator that wraps a page-object action in `test.step`, so reports read as business steps:
- * `In Login Page, Login With`.
+ * `Login Page › Login With`.
  *
  * An optional title replaces the action part and may reference parameters:
- * `@step('Login With ${credential.username}')` → `In Login Page, Login With alice`.
+ * `@step('Login With ${credential.username}')` → `Login Page › Login With alice`.
  * Use a plain quoted string, not backticks — placeholders are filled when the method is called.
  * Never reference secrets (passwords, tokens) in a title: reports and traces get shared.
  */
@@ -18,7 +18,7 @@ export function step(title?: string) {
     const params = parameters(target);
     return async function (this: This, ...args: Args): Promise<R> {
       const action = title ? fill(title, params, args) : words(String(context.name));
-      return test.step(`In ${words(this.constructor.name)}, ${action}`, () => target.call(this, ...args), { box: true });
+      return test.step(`${words(this.constructor.name)} › ${action}`, () => target.call(this, ...args), { box: true });
     };
   };
 }

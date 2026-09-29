@@ -1,6 +1,6 @@
 {
   "name": "@chonla/playwright",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Readable Page Object Model decorators for Playwright: @step for business-readable reports and @PageWith for mixing shared UI into page objects.",
   "keywords": [
     "playwright",

@@ -31,7 +31,7 @@ test('mixes getters and methods from every mixin into the page object', async ()
 });
 
 test('@step on a mixed-in method is labelled with the page, not the mixin', async () => {
-  test.info().annotations.push({ type: 'expected-step', description: 'In Store Page, Open Cart' });
+  test.info().annotations.push({ type: 'expected-step', description: 'Store Page › Open Cart' });
   await new StorePage(page).openCart();
 });
 

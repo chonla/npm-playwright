@@ -28,20 +28,20 @@ class LoginPage {
 
 const page = {} as Page;
 
-test('untitled step reads "In <Page Name>, <Method Name>"', async () => {
-  expectSteps('In Login Page, Open');
+test('untitled step reads "<Class Name> › <Method Name>"', async () => {
+  expectSteps('Login Page › Open');
   await new LoginPage(page).open();
 });
 
 test('title placeholders are filled from the arguments, and the method still runs and returns', async () => {
-  expectSteps('In Login Page, Login With alice');
+  expectSteps('Login Page › Login With alice');
   const login = new LoginPage(page);
   expect(await login.loginWith({ username: 'alice', password: 'secret' })).toBe('done');
   expect(login.calls).toEqual(['login alice']);
 });
 
 test('parameters with default values can be used in titles', async () => {
-  expectSteps('In Login Page, Add Hoodie x3', 'In Login Page, Add Cap x1');
+  expectSteps('Login Page › Add Hoodie x3', 'Login Page › Add Cap x1');
   const login = new LoginPage(page);
   await login.add('Hoodie', 3);
   await login.add('Cap');
@@ -64,6 +64,6 @@ class ShopPage {
 }
 
 test('an omitted string default shows without quotes', async () => {
-  expectSteps('In Shop Page, Search hoodie In All');
+  expectSteps('Shop Page › Search hoodie In All');
   await new ShopPage(page).search('hoodie');
 });

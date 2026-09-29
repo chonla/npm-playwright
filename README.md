@@ -2,16 +2,16 @@
 
 Readable Page Object Model decorators for [Playwright](https://playwright.dev):
 
-- **`@step`** turns page-object methods into business-readable report steps: `In Login Page, Login With alice`.
+- **`@step`** turns page-object methods into business-readable report steps: `Login Page › Login With alice`.
 - **`@PageWith`** mixes UI shared across pages (header, side menu, cart button) into page objects: `@PageWith(Header) class CartPage`.
 
 ```
 ✓ removing the only item empties the cart
-  ├ In Login Page, Open
-  ├ In Login Page, Login With standard_user
-  ├ In Inventory Page, Add Sauce Labs Backpack To Cart
-  ├ In Inventory Page, Open Cart
-  ├ In Cart Page, Remove Sauce Labs Backpack
+  ├ Login Page › Open
+  ├ Login Page › Login With standard_user
+  ├ Inventory Page › Add Sauce Labs Backpack To Cart
+  ├ Inventory Page › Open Cart
+  ├ Cart Page › Remove Sauce Labs Backpack
   ├ expect(cartPage.items).toHaveCount(0)
 ```
 
@@ -32,12 +32,12 @@ import { step } from '@chonla/playwright';
 export class LoginPage {
   constructor(readonly page: Page) {}
 
-  @step()                                     // → "In Login Page, Open"
+  @step()                                     // → "Login Page › Open"
   async open() {
     await this.page.goto('/');
   }
 
-  @step('Login With ${credential.username}')  // → "In Login Page, Login With alice"
+  @step('Login With ${credential.username}')  // → "Login Page › Login With alice"
   async loginWith(credential: { username: string; password: string }) {
     await this.page.getByLabel('Username').fill(credential.username);
     await this.page.getByLabel('Password').fill(credential.password);
@@ -46,7 +46,7 @@ export class LoginPage {
 }
 ```
 
-- **Label** is `In <Class Name>, <action>`, with camelCase split into words. Without a title the action is the method name (`loginWith` → `Login With`), so name methods the way a reader would say them.
+- **Label** is `<Class Name> › <action>`, a breadcrumb that matches the `›` Playwright uses between test titles, with camelCase split into words. Without a title the action is the method name (`loginWith` → `Login With`), so name methods the way a reader would say them.
 - **Title placeholders** `${param}` / `${param.path}` reference the method's parameter names and are filled when the method is called. Write the title as a **plain quoted string**, not a template literal (backticks). An omitted argument shows its default value (`add(name, quantity = 1)`).
 - **Typos fail fast**: `@step('Login With ${credentail.username}')` rejects with `"credentail" is not a parameter of this method (credential)` instead of printing `undefined`.
 - **Never put secrets in a title** (`${credential.password}`) — reports and traces get shared. Arguments only appear when you name them.
@@ -85,7 +85,7 @@ export class CartPage extends BasePage {
   }
 }
 
-// cartPage.cartBadge, cartPage.openCart() → report step "In Cart Page, Open Cart"
+// cartPage.cartBadge, cartPage.openCart() → report step "Cart Page › Open Cart"
 ```
 
 - Apply several: `@PageWith(Header, SideMenu)` with `interface CartPage extends Header, SideMenu {}`. **Both lines are needed** — the decorator adds members at runtime, the interface tells TypeScript.
