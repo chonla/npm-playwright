@@ -44,9 +44,9 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "npm run build && tsc --noEmit -p tsconfig.json",
     "test": "npm run build && playwright test",
-    "prepublishOnly": "npm run typecheck && npm test"
+    "prepublishOnly": "npm run typecheck && playwright test"
   },
   "peerDependencies": {
     "@playwright/test": ">=1.39.0"
