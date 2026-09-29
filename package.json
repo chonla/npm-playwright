@@ -1,6 +1,6 @@
 {
   "name": "@chonla/playwright",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Readable Page Object Model decorators for Playwright: @step for business-readable reports and @PageWith for mixing shared UI into page objects.",
   "keywords": [
     "playwright",
@@ -28,7 +28,8 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
