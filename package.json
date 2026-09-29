@@ -1,15 +1,19 @@
 {
   "name": "@chonla/playwright",
-  "version": "0.2.0",
-  "description": "Readable Page Object Model decorators for Playwright: @step for business-readable reports and @PageWith for mixing shared UI into page objects.",
+  "version": "0.3.0",
+  "description": "Readable page objects and API clients for Playwright: @step for business-readable reports, @PageWith/@ApiWith mixins, @Get/@Post endpoint decorators, and schema-validated responses.",
   "keywords": [
-    "playwright",
-    "page-object-model",
-    "pom",
+    "api-testing",
     "decorators",
-    "test.step",
+    "e2e",
     "mixin",
-    "e2e"
+    "page-object-model",
+    "playwright",
+    "pom",
+    "rest",
+    "standard-schema",
+    "test.step",
+    "zod"
   ],
   "license": "MIT",
   "author": "chonla",
@@ -50,6 +54,7 @@
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.6.3",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "zod": "^4.6.5"
   }
 }

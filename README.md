@@ -1,9 +1,12 @@
 # @chonla/playwright
 
-Readable Page Object Model decorators for [Playwright](https://playwright.dev):
+Readable page objects and API clients for [Playwright](https://playwright.dev):
 
-- **`@step`** turns page-object methods into business-readable report steps: `Login Page › Login With alice`.
+- **`@step`** turns page-object and API-client methods into business-readable report steps: `Login Page › Login With alice`.
 - **`@PageWith`** mixes UI shared across pages (header, side menu, cart button) into page objects: `@PageWith(Header) class CartPage`.
+- **`@ApiWith`** does the same for API clients: `@ApiWith(Pagination) class ProductsApi`.
+- **`@Get` `@Post` `@Put` `@Patch` `@Delete` `@Head`** declare API requests; every request and response is attached to its report step, with secrets redacted.
+- **`parseBody`** validates a response body with zod (or any [Standard Schema](https://standardschema.dev) library) and returns it typed.
 
 ```
 ✓ removing the only item empties the cart
@@ -96,13 +99,112 @@ export class CartPage extends BasePage {
   - instance fields (`readonly x = this.page...`) are not copied → use getters;
   - members a mixin inherits are not copied → apply both mixins instead of making one extend the other.
 
+## API clients
+
+### `@Get` / `@Post` / `@Put` / `@Patch` / `@Delete` / `@Head`
+
+```ts
+import type { APIRequestContext, APIResponse } from '@playwright/test';
+import { Get, Post, declared, step } from '@chonla/playwright';
+
+export class StoreApi {
+  constructor(readonly request: APIRequestContext) {}
+
+  @Get('/api/products/${sku}')                         // → "Store Api › GET /api/products/0000000001"
+  productBySku(sku: string): Promise<APIResponse> { return declared(); }
+
+  @Get('/api/products', { params: 'query' })           // query → ?page=2
+  products(query: { page: number }): Promise<APIResponse> { return declared(); }
+
+  @step('Login As ${credential.login}')                // optional business step around the request
+  @Post('/api/auth', { data: 'credential' })           // credential → JSON body
+  login(credential: { login: string; password: string }): Promise<APIResponse> { return declared(); }
+}
+```
+
+- The decorator makes the request through the class's `request` (an `APIRequestContext`); the method body is just `return declared()`, which throws if the decorator is ever removed.
+- `${param.path}` placeholders in the path are filled from the arguments and URL-encoded.
+- Options name the parameter to send: `data` (JSON body), `form` (form-encoded body), `params` (query string). `headers` values may use placeholders: `{ headers: { authorization: 'Bearer ${token}' } }`.
+- A misspelled parameter name in the path or options throws **when the class is defined**, not on first call.
+- Stack `@step` above an endpoint to give it a business name; the HTTP step nests under it.
+
+### Request and response in the report
+
+Every endpoint step gets an attachment named `POST /api/auth → 200` with the request (headers, query, body) and the response (status, headers, body). A hand-written `@step` method that returns an `APIResponse` gets the response part (Playwright's response doesn't expose the request method or body):
+
+```
+POST http://localhost/api/auth → 200 OK
+
+Request body (JSON):
+{ "login": "customer1", "password": "•••" }
+
+Response headers:
+content-type: application/json
+set-cookie: •••
+
+Response body:
+{ "token": "•••", "user": "customer1" }
+```
+
+Secrets are always masked: the `Authorization`, `Proxy-Authorization`, `Cookie`, `Set-Cookie` and API-key headers, and JSON fields whose names look like passwords, secrets, tokens, API keys or credentials, at any depth. Bodies over 20,000 characters are truncated. On Playwright ≥ 1.51 the attachment sits on the step; on older versions, on the test.
+
+### `@ApiWith`
+
+```ts
+import type { APIRequestContext } from '@playwright/test';
+import { ApiWith, step } from '@chonla/playwright';
+
+export abstract class Pagination {
+  abstract readonly request: APIRequestContext;
+
+  @step('Fetch Page ${page} Of ${path}')
+  fetchPage(path: string, page: number) {
+    return this.request.get(path, { params: { page } });
+  }
+}
+
+export interface ProductsApi extends Pagination {}
+@ApiWith(Pagination)
+export class ProductsApi {
+  constructor(readonly request: APIRequestContext) {}
+}
+// productsApi.fetchPage('/api/products', 2) → "Products Api › Fetch Page 2 Of /api/products"
+```
+
+Same rules as `@PageWith`: the client needs a `request` property, mixins contribute their own getters and methods, and name clashes throw.
+
+### `parseBody`
+
+```ts
+import { z } from 'zod';
+import { parseBody } from '@chonla/playwright';
+
+const Product = z.object({ sku: z.string(), title: z.string(), price: z.number() });
+
+// Act
+const response = await storeApi.productBySku('0000000001');
+
+// Assert
+expect(response.status()).toBe(200);
+const product = await parseBody(response, Product);     // typed as { sku: string; title: string; price: number }
+expect(product.price).toBe(79.69);
+```
+
+Works with any [Standard Schema](https://standardschema.dev) validator — zod ≥ 3.24, valibot, arktype — with no extra dependency. A mismatch throws with every issue and its path:
+
+```
+Response 200 from /api/products?page=1 does not match the schema:
+  total: Invalid input: expected string, received number
+  data.0.price: Invalid input: expected string, received number
+```
+
 ### ESLint
 
-`@typescript-eslint/no-unsafe-declaration-merging` (in the `recommended` config) flags the `interface X` + `class X` pair that `@PageWith` relies on. Turn it off for page objects:
+`@typescript-eslint/no-unsafe-declaration-merging` (in the `recommended` config) flags the `interface X` + `class X` pair that `@PageWith` and `@ApiWith` rely on. Turn it off for page objects and API clients:
 
 ```js
 // eslint.config.js
-{ files: ['pages/**/*.ts'], rules: { '@typescript-eslint/no-unsafe-declaration-merging': 'off' } }
+{ files: ['pages/**/*.ts', 'apis/**/*.ts'], rules: { '@typescript-eslint/no-unsafe-declaration-merging': 'off' } }
 ```
 
 ## License

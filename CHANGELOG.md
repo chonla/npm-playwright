@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+- `@ApiWith(...mixins)`: `@PageWith` for API clients (classes with `request: APIRequestContext`).
+- `@Get` `@Post` `@Put` `@Patch` `@Delete` `@Head`: declared requests with `${param}` path placeholders (URL-encoded) and `data` / `form` / `params` / `headers` options. Misspelled parameter names throw when the class is defined.
+- Request/response attachments: endpoint steps, and `@step` methods returning an `APIResponse`, attach the exchange to the report with secrets redacted.
+- `parseBody(response, schema)`: validates a JSON body with any Standard Schema library (zod, valibot, arktype) and returns it typed.
+- Stacked decorators (`@step` above `@Post`) keep the original method's parameter names.
+
 ## 0.2.0
 
 ### Breaking

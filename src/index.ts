@@ -1,3 +1,10 @@
 export { step } from './step';
 export { PageWith } from './page-with';
-export type { MixinClass, PageObjectClass } from './page-with';
+export { ApiWith } from './api-with';
+export { Get, Post, Put, Patch, Delete, Head, declared } from './http';
+export { parseBody } from './parse-body';
+export type { MixinClass } from './mixin';
+export type { PageObjectClass } from './page-with';
+export type { ApiClientClass } from './api-with';
+export type { EndpointOptions } from './http';
+export type { StandardSchemaV1, InferOutput } from './parse-body';
