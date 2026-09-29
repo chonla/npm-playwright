@@ -1,0 +1,54 @@
+{
+  "name": "@chonla/playwright",
+  "version": "0.1.0",
+  "description": "Readable Page Object Model decorators for Playwright: @step for business-readable reports and @PageWith for mixing shared UI into page objects.",
+  "keywords": [
+    "playwright",
+    "page-object-model",
+    "pom",
+    "decorators",
+    "test.step",
+    "mixin",
+    "e2e"
+  ],
+  "license": "MIT",
+  "author": "chonla",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chonla/npm-playwright.git"
+  },
+  "homepage": "https://github.com/chonla/npm-playwright#readme",
+  "bugs": {
+    "url": "https://github.com/chonla/npm-playwright/issues"
+  },
+  "type": "commonjs",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "npm run build && playwright test",
+    "prepublishOnly": "npm run typecheck && npm test"
+  },
+  "peerDependencies": {
+    "@playwright/test": ">=1.39.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.3",
+    "typescript": "^5.9.3"
+  }
+}
