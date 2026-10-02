@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Attachments no longer mask keys that merely end in "pass" (`bypass`, `compass`). `pass`, `userPass`, `db_pass` and `passphrase` are still masked.
+
 ## 0.3.0
 
 - `@ApiWith(...mixins)`: `@PageWith` for API clients (classes with `request: APIRequestContext`).

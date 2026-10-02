@@ -1,6 +1,6 @@
 {
   "name": "@chonla/playwright",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Readable page objects and API clients for Playwright: @step for business-readable reports, @PageWith/@ApiWith mixins, @Get/@Post endpoint decorators, and schema-validated responses.",
   "keywords": [
     "api-testing",
